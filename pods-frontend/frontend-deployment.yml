@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pods-frontend-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pods-frontend
+  template:
+    metadata:
+      labels:
+        app: pods-frontend
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - name: pods-frontend
+        image: pods-frontend:1.0.0
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
+            ephemeral-storage: "1Gi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+            ephemeral-storage: "2Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pods-frontend-service
+spec:
+  selector:
+    app: pods-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer
